@@ -1,0 +1,12 @@
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Keep the build warning-free; these catch real bugs.
+    avoid_print: true
+    prefer_single_quotes: true
+    require_trailing_commas: true

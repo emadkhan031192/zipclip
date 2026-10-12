@@ -1,0 +1,55 @@
+name: zipclip
+description: ZipClip - a fast, modern short-video saver for Android. Paste a link, tap once, saved.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+# NOTE: versions below are pinned to exact releases (resolved with Flutter
+# 3.47.7). They are intentionally exact, not ranges, so CI builds are
+# reproducible. See README.md for the update procedure.
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: 5.11.1
+  flutter_riverpod: 3.4.3
+  sqflite: 2.4.4+1
+  shared_preferences: 2.5.6
+  permission_handler: 13.0.2
+  video_thumbnail: 0.5.6
+  path_provider: 2.1.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/
+    - assets/img/
+  fonts:
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/Sora-Variable.ttf
+          weight: 700
+        - asset: assets/fonts/Sora-Variable.ttf
+          weight: 800
+    - family: DMSans
+      fonts:
+        - asset: assets/fonts/DMSans-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans-Variable.ttf
+          weight: 700
+    - family: IBMPlexMono
+      fonts:
+        - asset: assets/fonts/IBMPlexMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/IBMPlexMono-SemiBold.ttf
+          weight: 600
