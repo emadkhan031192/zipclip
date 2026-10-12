@@ -3,6 +3,8 @@ package com.afzal.zipclip
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.media.ThumbnailUtils
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -11,6 +13,7 @@ import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Size
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -96,6 +99,7 @@ class ZipClipPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             "deleteMedia" -> deleteMedia(call, result)
             "getFreeSpaceBytes" -> result.success(freeSpaceBytes())
             "getNetworkType" -> result.success(networkType())
+            "getVideoThumbnail" -> videoThumbnail(call, result)
             "needsLegacyStoragePermission" ->
                 result.success(Build.VERSION.SDK_INT < 29)
             "serviceStart" -> {
@@ -329,8 +333,43 @@ class ZipClipPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         }
     }
 
-    private fun networkType(): String {
-        val ctx = context ?: return "unknown"
+    /** Renders a video frame to a JPEG at [outPath]; null on failure. */
+    private fun videoThumbnail(call: MethodCall, result: MethodChannel.Result) {
+        val path = call.argument<String>("videoPath")
+        val outPath = call.argument<String>("outPath")
+        if (path.isNullOrEmpty() || outPath.isNullOrEmpty()) {
+            result.success(null)
+            return
+        }
+        try {
+            val bitmap = if (Build.VERSION.SDK_INT >= 29) {
+                ThumbnailUtils.createVideoThumbnail(
+                    File(path),
+                    Size(320, 320),
+                    null,
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                ThumbnailUtils.createVideoThumbnail(
+                    path,
+                    MediaStore.Video.Thumbnails.MINI_KIND,
+                )
+            } ?: run {
+                result.success(null)
+                return
+            }
+            File(outPath).parentFile?.mkdirs()
+            File(outPath).outputStream().use { out ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, out)
+            }
+            if (!bitmap.isRecycled) bitmap.recycle()
+            result.success(outPath)
+        } catch (_: Exception) {
+            result.success(null)
+        }
+    }
+
+    private fun networkType(): String {        val ctx = context ?: return "unknown"
         return try {
             val cm =
                 ctx.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

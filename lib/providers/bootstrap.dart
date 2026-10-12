@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../core/engine/download_engine.dart';
 import '../core/native/zipclip_native.dart';
@@ -52,22 +51,6 @@ final workDirProvider = FutureProvider<Directory>((ref) async {
   return dir;
 });
 
-class _VideoThumbnailer implements Thumbnailer {
-  @override
-  Future<String?> videoThumbnail(String videoPath, String outPath) async {
-    try {
-      return await VideoThumbnail.thumbnailFile(
-        video: videoPath,
-        thumbnailPath: Directory(outPath).parent.path,
-        imageFormat: ImageFormat.JPEG,
-        quality: 70,
-      );
-    } catch (_) {
-      return null;
-    }
-  }
-}
-
 final engineProvider = FutureProvider<DownloadEngine>((ref) async {
   final db = await ref.watch(appDbProvider.future);
   final workDir = await ref.watch(workDirProvider.future);
@@ -80,7 +63,7 @@ final engineProvider = FutureProvider<DownloadEngine>((ref) async {
     workDir: workDir,
     placer: NativeFilePlacer(),
     foreground: NativeForegroundControl(native),
-    thumbnailer: _VideoThumbnailer(),
+    thumbnailer: NativeThumbnailer(native),
     network: NativeNetworkChecker(native),
     maxParallel: () => settings.current.maxParallel,
   );

@@ -134,6 +134,20 @@ class ZipClipNative {
       return false;
     }
   }
+
+  /// Renders a video frame to a JPEG at [outPath]; null when unavailable.
+  Future<String?> videoThumbnail(String videoPath, String outPath) async {
+    try {
+      return await _channel.invokeMethod<String>('getVideoThumbnail', {
+        'videoPath': videoPath,
+        'outPath': outPath,
+      });
+    } on PlatformException catch (_) {
+      return null;
+    } on MissingPluginException catch (_) {
+      return null;
+    }
+  }
 }
 
 /// Foreground service control backed by the native DownloadService.
@@ -218,4 +232,15 @@ class NativeNetworkChecker implements NetworkChecker {
   @override
   Future<bool> get isWifi async =>
       (await _native.getNetworkType()) == 'wifi';
+}
+
+/// Video thumbnails via the platform ThumbnailUtils (no extra plugin).
+class NativeThumbnailer implements Thumbnailer {
+  NativeThumbnailer(this._native);
+
+  final ZipClipNative _native;
+
+  @override
+  Future<String?> videoThumbnail(String videoPath, String outPath) =>
+      _native.videoThumbnail(videoPath, outPath);
 }
