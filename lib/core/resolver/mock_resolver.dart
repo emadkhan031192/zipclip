@@ -10,8 +10,8 @@ import 'link_resolver.dart';
 /// plus *real, publicly licensed sample files* so the whole UI and the
 /// download engine work end-to-end without any site-specific code:
 ///
-/// * Video: Google's public `gtv-videos-bucket` sample clips
-///   (https://commondatastorage.googleapis.com/gtv-videos-bucket/).
+/// * Video: Big Buck Bunny sample clips from test-videos.co.uk
+///   (Blender Foundation open movie, Creative Commons).
 /// * Audio: the SoundHelix sample MP3
 ///   (https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3).
 ///
@@ -32,13 +32,15 @@ class MockResolver implements LinkResolver {
 
   // ------------------------------------------------------------------
   // DEMO sample files. Public samples, hotlinked for demo purposes only.
+  // (Google's old gtv-videos-bucket started returning 403 in 2026, so
+  // these moved to test-videos.co.uk.)
   // ------------------------------------------------------------------
   static const _demo1080p =
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+      'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4';
   static const _demo720p =
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4';
-  static const _demo480p =
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4';
+      'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4';
+  static const _demo360p =
+      'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4';
   static const _demoAudio =
       'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 
@@ -95,11 +97,11 @@ class MockResolver implements LinkResolver {
     final sizes = await Future.wait([
       headSize(_demo1080p),
       headSize(_demo720p),
-      headSize(_demo480p),
+      headSize(_demo360p),
       headSize(_demoAudio),
     ]);
 
-    const estimates = [14800000, 9800000, 5200000, 6200000];
+    const estimates = [1050000, 970000, 990000, 6200000];
     int size(int i) => sizes[i] ?? estimates[i];
 
     return ResolvedMedia(
@@ -133,9 +135,9 @@ class MockResolver implements LinkResolver {
           sizeBytes: size(1),
         ),
         MediaStream(
-          id: 'demo-480p',
-          label: '480p',
-          url: _demo480p,
+          id: 'demo-360p',
+          label: '360p',
+          url: _demo360p,
           container: 'mp4',
           hasVideo: true,
           hasAudio: true,

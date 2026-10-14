@@ -377,7 +377,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _pickQuality(AppSettings s) async {
-    const options = ['1080p', '720p', '480p'];
+    const options = ['1080p', '720p', '360p'];
     final picked = await showDialog<String>(
       context: context,
       builder: (context) => SimpleDialog(

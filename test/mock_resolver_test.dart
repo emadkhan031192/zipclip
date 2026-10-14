@@ -52,7 +52,7 @@ void main() {
       expect(media.author, isNotEmpty);
       expect(media.thumbnailUrl, isNotEmpty);
       expect(media.streams.map((s) => s.label),
-          containsAll(['1080p', '720p', '480p', 'Audio']),);
+          containsAll(['1080p', '720p', '360p', 'Audio']),);
       expect(media.offersWatermarkFree, isTrue);
       // Sizes come from the (canned) HEAD request: real measured values.
       expect(media.streams.every((s) => s.sizeBytes == 14889779), isTrue);
